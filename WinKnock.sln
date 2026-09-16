@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12210.168 stable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinKnock.Service", "WinKnock.Service\WinKnock.Service.csproj", "{E708F025-FA45-4698-8B61-AD13B3295207}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6D77205C-2844-4890-9F8A-31D4B735458B} = {6D77205C-2844-4890-9F8A-31D4B735458B}
+		{76A8608B-124B-4839-AEEA-3F9375BE234F} = {76A8608B-124B-4839-AEEA-3F9375BE234F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinKnock.Core", "WinKnock.Core\WinKnock.Core.csproj", "{6D77205C-2844-4890-9F8A-31D4B735458B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinKnock.Firewall", "WinKnock.Firewall\WinKnock.Firewall.csproj", "{76A8608B-124B-4839-AEEA-3F9375BE234F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6D77205C-2844-4890-9F8A-31D4B735458B} = {6D77205C-2844-4890-9F8A-31D4B735458B}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinKnock.Client", "WinKnock.Client\WinKnock.Client.csproj", "{FC879AC0-722D-4CDE-B9F9-72356505CE7B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6D77205C-2844-4890-9F8A-31D4B735458B} = {6D77205C-2844-4890-9F8A-31D4B735458B}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinKnock.Tests", "WinKnock.Tests\WinKnock.Tests.csproj", "{FED2FC76-255A-4E95-AB7F-5D424016B2EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6D77205C-2844-4890-9F8A-31D4B735458B} = {6D77205C-2844-4890-9F8A-31D4B735458B}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{88F30298-3A17-486B-9E90-0815BEA03F05}"
+	ProjectSection(SolutionItems) = preProject
+		Install-WinKnock.ps1 = Install-WinKnock.ps1
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E708F025-FA45-4698-8B61-AD13B3295207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E708F025-FA45-4698-8B61-AD13B3295207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E708F025-FA45-4698-8B61-AD13B3295207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E708F025-FA45-4698-8B61-AD13B3295207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D77205C-2844-4890-9F8A-31D4B735458B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D77205C-2844-4890-9F8A-31D4B735458B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D77205C-2844-4890-9F8A-31D4B735458B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D77205C-2844-4890-9F8A-31D4B735458B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76A8608B-124B-4839-AEEA-3F9375BE234F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76A8608B-124B-4839-AEEA-3F9375BE234F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76A8608B-124B-4839-AEEA-3F9375BE234F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76A8608B-124B-4839-AEEA-3F9375BE234F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC879AC0-722D-4CDE-B9F9-72356505CE7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC879AC0-722D-4CDE-B9F9-72356505CE7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC879AC0-722D-4CDE-B9F9-72356505CE7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC879AC0-722D-4CDE-B9F9-72356505CE7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FED2FC76-255A-4E95-AB7F-5D424016B2EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED2FC76-255A-4E95-AB7F-5D424016B2EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED2FC76-255A-4E95-AB7F-5D424016B2EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED2FC76-255A-4E95-AB7F-5D424016B2EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B0F9F280-BD40-4ABE-8795-C6298C38B8E2}
+	EndGlobalSection
+EndGlobal
