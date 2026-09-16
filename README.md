@@ -247,26 +247,26 @@ O script instala, atualiza e remove o serviço. Precisa ser executado como admin
 
 ```powershell
 # Instalar ou atualizar (arquivos na pasta atual)
-.\\Install-WinKnock.ps1 -Source .
+.\Install-WinKnock.ps1 -Source .
 
 # Instalar a partir de outra pasta
-.\\Install-WinKnock.ps1 -Source D:\Downloads\WinKnock
+.\Install-WinKnock.ps1 -Source D:\Downloads\WinKnock
 
 # Atualizar substituindo também a configuração (a anterior é salva como .bak)
-.\\Install-WinKnock.ps1 -Source . -ReplaceConfig
+.\Install-WinKnock.ps1 -Source . -ReplaceConfig
 
 # Instalar sem alterar as notificações do firewall
-.\\Install-WinKnock.ps1 -Source . -SkipFirewallHardening
+.\Install-WinKnock.ps1 -Source . -SkipFirewallHardening
 
 # Remover completamente
-.\\Install-WinKnock.ps1 -Uninstall
+.\Install-WinKnock.ps1 -Uninstall
 ```
 
 ### O que ele faz na instalação/atualização
 
 1. Valida o `appsettings.json` e lista as Doors configuradas.
 2. Para o serviço, se estiver rodando, e espera o executável ser liberado.
-3. Copia os arquivos para `%ProgramFiles%\\WinKnock` (usa `ProgramW6432`, então funciona mesmo em PowerShell 32 bits e em instalações com Program Files em outra unidade).
+3. Copia os arquivos para `%ProgramFiles%\WinKnock` (usa `ProgramW6432`, então funciona mesmo em PowerShell 32 bits e em instalações com Program Files em outra unidade).
 4. **Preserva** um `appsettings.json` já existente, a menos que `-ReplaceConfig` seja usado.
 5. Registra o serviço `WinKnock` com inicialização automática (ou atualiza o registro, se já existir).
 6. Configura reinício automático em caso de falha (após 5 s, 10 s e 60 s), inclusive quando o serviço sai com código de erro.
@@ -322,7 +322,7 @@ Qualquer ferramenta que envie datagramas UDP serve.
 ```powershell
 $u = [System.Net.Sockets.UdpClient]::new()
 foreach ($p in 41234, 17771, 30512, 22001) {
-    [void]$u.Send(\[byte\[]]@(0), 1, "10.0.0.62", $p)
+    [void]$u.Send([byte[]]@(0), 1, "10.0.0.62", $p)
     Start-Sleep -Milliseconds 200
 }
 $u.Close()
@@ -405,7 +405,7 @@ Para ver cada batida recebida durante o desenvolvimento, ajuste o nível de log 
 Nunca teste em cima do seu único acesso remoto à máquina. Use uma porta de teste (ex.: 5555) com um listener simples:
 
 ```powershell
-$l = \[System.Net.Sockets.TcpListener]::new(\[ipaddress]::Any, 5555); $l.Start()
+$l = [System.Net.Sockets.TcpListener]::new([ipaddress]::Any, 5555); $l.Start()
 "Escutando na 5555"; $c = $l.AcceptTcpClient(); "Conexão de $($c.Client.RemoteEndPoint)"
 $c.Close(); $l.Stop()
 ```
@@ -417,13 +417,13 @@ E teste a partir de **outra máquina**, já que o Windows Firewall não filtra o
 ## Publicando os executáveis
 
 ```powershell
-# Serviço: arquivo único, self-contained, comprimido (\~35 MB)
+# Serviço: arquivo único, self-contained, comprimido (~35 MB)
 dotnet publish WinKnock.Service -c Release -r win-x64 --self-contained `
-    -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o publish\\service
+    -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o publish\service
 
 # Cliente: arquivo único, self-contained, com trimming
 dotnet publish WinKnock.Client -c Release -r win-x64 --self-contained `
-    -p:PublishSingleFile=true -p:PublishTrimmed=true -o publish\\client
+    -p:PublishSingleFile=true -p:PublishTrimmed=true -o publish\client
 ```
 
 O serviço **não** usa trimming: o acesso ao firewall via COM com `dynamic` não é compatível com ele.
@@ -477,7 +477,7 @@ Para acompanhar o que o firewall permite e descarta:
 
 ```powershell
 Set-NetFirewallProfile -All -LogAllowed True -LogBlocked True
-Get-Content "$env:SystemRoot\\System32\\LogFiles\\Firewall\\pfirewall.log" -Wait | Select-String " 3389 "
+Get-Content "$env:SystemRoot\System32\LogFiles\Firewall\pfirewall.log" -Wait | Select-String " 3389 "
 
 # Ao terminar
 Set-NetFirewallProfile -All -LogAllowed False -LogBlocked False
@@ -521,9 +521,9 @@ No Windows Firewall, **regras de bloqueio vencem regras de permissão**. Procure
 ```powershell
 Get-NetFirewallRule -PolicyStore ActiveStore -Direction Inbound -Enabled True -Action Block |
     ForEach-Object {
-        $pf  = $\_ | Get-NetFirewallPortFilter
-        $app = $\_ | Get-NetFirewallApplicationFilter
-        \[pscustomobject]@{ Regra = $\_.DisplayName; Porta = ($pf.LocalPort -join ','); Programa = $app.Program }
+        $pf  = $_ | Get-NetFirewallPortFilter
+        $app = $_ | Get-NetFirewallApplicationFilter
+        [pscustomobject]@{ Regra = $_.DisplayName; Porta = ($pf.LocalPort -join ','); Programa = $app.Program }
     } | Format-Table -AutoSize
 ```
 
@@ -558,7 +558,7 @@ Get-WinEvent -FilterHashtable @{ LogName = 'Application'; ProviderName = 'WinKno
     Format-Table TimeCreated, Message -Wrap
 
 # Ou execute diretamente, como administrador, para ver o erro no console
-\& "$env:ProgramFiles\\WinKnock\\WinKnock.Service.exe"
+& "$env:ProgramFiles\WinKnock\WinKnock.Service.exe"
 ```
 
 As causas mais comuns são erro de validação no `appsettings.json` e porta de batida já ocupada por outro programa (`netstat -ano -p udp | findstr :7000`).
@@ -588,7 +588,7 @@ Para relatar uma vulnerabilidade, use a aba **Security → Report a vulnerabilit
 * \[ ] Recusar a sequência de exemplo na validação.
 * \[ ] Campo `ServiceProgram` na Door, para avisar sobre regras de permissão ou bloqueio vinculadas ao executável do serviço protegido.
 * \[ ] Aviso na inicialização quando `NotifyOnListen` estiver ativado.
-* \[ ] Sequências de uso único (`one\_time\_sequences` do knockd).
+* \[ ] Sequências de uso único (`one_time_sequences` do knockd).
 * \[ ] Modo **SPA** (*Single Packet Authorization*): um único datagrama com HMAC e timestamp, resistente a replay.
 * \[ ] Controller de firewall com interfaces COM tipadas, permitindo trimming e executáveis menores.
 * \[ ] Assinatura digital dos executáveis.
