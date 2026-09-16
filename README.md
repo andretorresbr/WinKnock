@@ -585,7 +585,6 @@ Para relatar uma vulnerabilidade, use a aba **Security → Report a vulnerabilit
 
 ## Roadmap
 
-* \[ ] Recusar a sequência de exemplo na validação.
 * \[ ] Campo `ServiceProgram` na Door, para avisar sobre regras de permissão ou bloqueio vinculadas ao executável do serviço protegido.
 * \[ ] Aviso na inicialização quando `NotifyOnListen` estiver ativado.
 * \[ ] Sequências de uso único (`one_time_sequences` do knockd).
