@@ -320,9 +320,9 @@ Qualquer ferramenta que envie datagramas UDP serve.
 **PowerShell:**
 
 ```powershell
-$u = \[System.Net.Sockets.UdpClient]::new()
+$u = [System.Net.Sockets.UdpClient]::new()
 foreach ($p in 41234, 17771, 30512, 22001) {
-    \[void]$u.Send(\[byte\[]]@(0), 1, "10.0.0.62", $p)
+    [void]$u.Send(\[byte\[]]@(0), 1, "10.0.0.62", $p)
     Start-Sleep -Milliseconds 200
 }
 $u.Close()
