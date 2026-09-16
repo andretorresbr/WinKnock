@@ -432,7 +432,7 @@ Alternativa menor para o serviço, dependente do .NET 10 Runtime instalado na m�
 
 ```powershell
 dotnet publish WinKnock.Service -c Release -r win-x64 --no-self-contained `
-    -p:PublishSingleFile=true -o publish\\service
+    -p:PublishSingleFile=true -o publish\service
 ```
 
 A pasta `publish` é ignorada pelo Git.
