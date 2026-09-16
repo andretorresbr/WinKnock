@@ -5,7 +5,7 @@
 O WinKnock é um serviço do Windows que mantém portas de serviços sensíveis (RDP, SSH, bancos de dados etc.) invisíveis para a rede e só as libera, temporariamente e apenas para o IP de origem, quando recebe uma sequência secreta de "batidas" em portas UDP. É inspirado no [knockd](https://github.com/jvinet/knock), ferramenta consagrada no Linux, mas foi escrito do zero para Windows, em C# e .NET 10, sem drivers de captura de pacotes.
 
 > \[!IMPORTANT]
-> Port knocking é \*\*segurança por obscuridade\*\*: uma camada extra que reduz a exposição a varreduras e ataques automatizados. Ele \*\*não substitui\*\* a autenticação do serviço protegido (senhas fortes, chaves SSH, NLA no RDP, MFA). Leia a seção \[Limitações e segurança](#limitações-e-segurança).
+> Port knocking é **segurança por obscuridade**: uma camada extra que reduz a exposição a varreduras e ataques automatizados. Ele **não substitui** a autenticação do serviço protegido (senhas fortes, chaves SSH, NLA no RDP, MFA). Leia a seção [Limitações e segurança](#limitações-e-segurança).
 
 \---
 
@@ -134,32 +134,32 @@ O Visual Studio 2022 não tem suporte oficial ao .NET 10.
 
 ```powershell
    # Compare com o valor listado em SHA256SUMS.txt
-   Get-FileHash .\\WinKnock-Server-1.0.0-win-x64.zip -Algorithm SHA256
+   Get-FileHash .\WinKnock-Server-1.0.0-win-x64.zip -Algorithm SHA256
 
    # Verifica que o arquivo foi gerado por este repositório (requer o GitHub CLI)
-   gh attestation verify .\\WinKnock-Server-1.0.0-win-x64.zip --repo andretorresbr/WinKnock
+   gh attestation verify .\WinKnock-Server-1.0.0-win-x64.zip --repo andretorresbr/WinKnock
    ```
 
 3. **Desbloqueie e extraia** (arquivos baixados recebem uma marca que faz o PowerShell bloquear o script):
 
 ```powershell
-   Unblock-File .\\WinKnock-Server-1.0.0-win-x64.zip
-   Expand-Archive .\\WinKnock-Server-1.0.0-win-x64.zip -DestinationPath .\\WinKnock
-   cd .\\WinKnock
+   Unblock-File .\WinKnock-Server-1.0.0-win-x64.zip
+   Expand-Archive .\WinKnock-Server-1.0.0-win-x64.zip -DestinationPath .\WinKnock
+   cd .\WinKnock
    ```
 
 4. **Edite o `appsettings.json`.** A sequência de exemplo é pública; defina portas próprias antes de instalar. Veja [Configuração](#configuração-appsettingsjson).
 5. **Instale** num PowerShell **como administrador**:
 
 ```powershell
-   .\\Install-WinKnock.ps1 -Source .
+   .\Install-WinKnock.ps1 -Source .
    ```
 
 6. **Teste de outra máquina** (o firewall não filtra o tráfego local, então testes em `127.0.0.1` não comprovam a proteção):
 
 ```powershell
    Test-NetConnection <IP-do-servidor> -Port 3389     # deve falhar
-   .\\WinKnock.Client.exe <IP-do-servidor> 7000 8000 9000
+   .\WinKnock.Client.exe <IP-do-servidor> 7000 8000 9000
    Test-NetConnection <IP-do-servidor> -Port 3389     # deve funcionar
    ```
 
@@ -170,7 +170,7 @@ O Visual Studio 2022 não tem suporte oficial ao .NET 10.
 
 ## Configuração (`appsettings.json`)
 
-O arquivo fica ao lado do executável (em `%ProgramFiles%\\WinKnock` após a instalação). Cada **Door** é uma porta protegida com sua própria sequência de batidas, equivalente a uma seção do `knockd.conf`.
+O arquivo fica ao lado do executável (em `%ProgramFiles%\WinKnock` após a instalação). Cada **Door** é uma porta protegida com sua própria sequência de batidas, equivalente a uma seção do `knockd.conf`.
 
 ```json
 {
@@ -188,10 +188,10 @@ O arquivo fica ao lado do executável (em `%ProgramFiles%\\WinKnock` após a ins
     }
   },
   "WinKnock": {
-    "Doors": \[
+    "Doors": [
       {
         "Name": "RDP",
-        "Sequence": \[ 7000, 8000, 9000 ],
+        "Sequence": [ 7000, 8000, 9000 ],
         "SequenceTimeoutSeconds": 10,
         "TargetPort": 3389,
         "TargetProtocol": "Tcp",
@@ -218,9 +218,9 @@ Se a configuração for inválida, o serviço **não inicia** e registra os erro
 ### Várias Doors
 
 ```json
-"Doors": \[
-  { "Name": "RDP", "Sequence": \[ 41234, 17771, 30512, 22001 ], "TargetPort": 3389, "TargetProtocol": "Tcp" },
-  { "Name": "SSH", "Sequence": \[ 52011, 12877, 44120, 9131 ],  "TargetPort": 22,   "TargetProtocol": "Tcp" }
+"Doors": [
+  { "Name": "RDP", "Sequence": [ 41234, 17771, 30512, 22001 ], "TargetPort": 3389, "TargetProtocol": "Tcp" },
+  { "Name": "SSH", "Sequence": [ 52011, 12877, 44120, 9131 ],  "TargetPort": 22,   "TargetProtocol": "Tcp" }
 ]
 ```
 
@@ -250,7 +250,7 @@ O script instala, atualiza e remove o serviço. Precisa ser executado como admin
 .\\Install-WinKnock.ps1 -Source .
 
 # Instalar a partir de outra pasta
-.\\Install-WinKnock.ps1 -Source D:\\Downloads\\WinKnock
+.\\Install-WinKnock.ps1 -Source D:\Downloads\WinKnock
 
 # Atualizar substituindo também a configuração (a anterior é salva como .bak)
 .\\Install-WinKnock.ps1 -Source . -ReplaceConfig
@@ -286,7 +286,7 @@ O serviço roda como **LocalSystem** e altera o firewall. Instalado numa pasta e
 Se o PowerShell bloquear o script:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\\Install-WinKnock.ps1 -Source .
+powershell -ExecutionPolicy Bypass -File .\Install-WinKnock.ps1 -Source .
 ```
 
 \---
@@ -294,7 +294,7 @@ powershell -ExecutionPolicy Bypass -File .\\Install-WinKnock.ps1 -Source .
 ## Usando o cliente
 
 ```
-WinKnock.Client.exe <host> <porta1> \[porta2 ...] \[--delay ms]
+WinKnock.Client.exe <host> <porta1> [porta2 ...] [--delay ms]
 ```
 
 |Parâmetro|Descrição|
