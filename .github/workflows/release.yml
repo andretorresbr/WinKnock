@@ -1,0 +1,87 @@
+# Cria uma release no GitHub ao enviar uma tag no formato v1.2.3
+#
+#   git tag v1.0.0
+#   git push origin v1.0.0
+#
+# Confira no GitHub Marketplace se há versões mais novas das actions abaixo.
+
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write        # criar a release
+  id-token: write        # atestado de procedência
+  attestations: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Instalar .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Definir versão a partir da tag
+        shell: pwsh
+        run: |
+          $version = "$env:GITHUB_REF_NAME".TrimStart('v')
+          "VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Testes
+        run: dotnet test -c Release
+
+      - name: Publicar serviço
+        run: >
+          dotnet publish WinKnock.Service -c Release -r win-x64 --self-contained
+          -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true
+          -p:Version=${{ env.VERSION }}
+          -o out/service
+
+      - name: Publicar cliente
+        run: >
+          dotnet publish WinKnock.Client -c Release -r win-x64 --self-contained
+          -p:PublishSingleFile=true -p:PublishTrimmed=true
+          -p:Version=${{ env.VERSION }}
+          -o out/client
+
+      - name: Empacotar
+        shell: pwsh
+        run: |
+          $v = $env:VERSION
+          New-Item dist, pkg/service, pkg/client -ItemType Directory -Force | Out-Null
+
+          Copy-Item out/service/WinKnock.Service.exe, out/service/appsettings.json pkg/service
+          Copy-Item Install-WinKnock.ps1, README.md, LICENSE.txt pkg/service
+          Copy-Item out/client/WinKnock.Client.exe, README.md, LICENSE.txt pkg/client
+
+          Compress-Archive pkg/service/* "dist/WinKnock-Server-$v-win-x64.zip"
+          Compress-Archive pkg/client/*  "dist/WinKnock-Client-$v-win-x64.zip"
+
+          Get-ChildItem dist/*.zip | ForEach-Object {
+              "{0}  {1}" -f (Get-FileHash $_ -Algorithm SHA256).Hash.ToLower(), $_.Name
+          } | Set-Content dist/SHA256SUMS.txt -Encoding ascii
+
+          Get-Content dist/SHA256SUMS.txt
+
+      - name: Atestado de procedência
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: 'dist/*.zip'
+
+      - name: Criar release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create $env:GITHUB_REF_NAME
+          (Get-ChildItem dist).FullName
+          --title "WinKnock $env:VERSION"
+          --generate-notes
